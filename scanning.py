@@ -6,6 +6,7 @@ def scan_ports(ip_addr: str, ports: [int]) -> [int]:
     open_ports = []
 
     for port in ports:
+        print(port)
         if is_port_open(ip_addr, port):
             open_ports.append(port)
 

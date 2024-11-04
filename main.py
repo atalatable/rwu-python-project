@@ -1,8 +1,8 @@
 import scanning
-
+from cli import execute_cli
 
 if __name__ == "__main__":
 
-    ip_target = "127.0.0.1"
+    target_ip = execute_cli()
 
-    print(scanning.scan_ports(ip_target, range(0, 9999)))
+    print(scanning.scan_ports(target_ip, range(0, 9999)))

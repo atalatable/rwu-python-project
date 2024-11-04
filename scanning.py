@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 def scan_ports(ip_addr: str, ports: [int], max_threads: int = 100) -> [int]:
     """Returns the list of open ports among all given ports"""
     open_ports = []
-    # Using a lock to safely append to the table
+    # Using a lock to safely append to the list
     lock = threading.Lock()
 
     def scan_port(port):

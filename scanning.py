@@ -1,10 +1,16 @@
 import socket
 import threading
+import options
 from concurrent.futures import ThreadPoolExecutor
 
 
-def scan_ports(ip_addr: str, ports: [int], max_threads: int = 100) -> [int]:
+def scan_ports(
+        ip_addr: str,
+        ports: list[int],
+        max_threads: int = 100,
+        ) -> list[int]:
     """Returns the list of open ports among all given ports"""
+
     open_ports = []
     # Using a lock to safely append to the list
     lock = threading.Lock()
@@ -24,10 +30,19 @@ def scan_ports(ip_addr: str, ports: [int], max_threads: int = 100) -> [int]:
     return open_ports
 
 
-def is_port_open(ip_addr, port):
+def is_port_open(
+        ip_addr,
+        port,
+        ) -> bool:
     """Returns True if a port is open"""
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    socket_type = socket.SOCK_STREAM
+    sock = socket.socket(socket.AF_INET, socket_type)
     sock.settimeout(0.5)  # Set a timeout for faster response
     result = sock.connect_ex((ip_addr, port))
     sock.close()
+
+    if options.verbose:
+        print(f"[+] {port} : {'opened' if result == 0 else 'closed'}")
+
     return result == 0

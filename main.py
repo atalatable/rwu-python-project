@@ -1,8 +1,14 @@
 import scanning
-from cli import execute_cli
+from cli import initialize
+import options
 
 if __name__ == "__main__":
 
-    target_ip = execute_cli()
+    initialize()
 
-    print(scanning.scan_ports(target_ip, range(0, 9999)))
+    print(
+            scanning.scan_ports(
+                options.target_ip,
+                range(options.start_port, options.end_port)
+                )
+            )

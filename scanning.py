@@ -53,15 +53,15 @@ def detect_service(ip_addr, port):
             try:
                 banner = sock.recv(1024).decode(errors="ignore").strip()
                 if banner:
-                    if "SSH" in banner:
+                    if "SSH" in banner.upper():
                         return "SSH"
-                    if "FTP" in banner:
+                    if "FTP" in banner.upper():
                         return "FTP"
-                    if "SMTP" in banner:
+                    if "SMTP" in banner.upper():
                         return "SMTP"
-                    if "MySQL" in banner:
+                    if "MySQL" in banner.upper():
                         return "MySQL"
-                    if "HTTP" in banner or "<html>" in banner:
+                    if "HTTP" in banner or "<HTML>" in banner.upper():
                         return "HTTP"
                     return f"Banner Detected: {banner}"
             except socket.timeout:

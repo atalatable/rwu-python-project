@@ -1,0 +1,34 @@
+services:
+  web-container:
+    image: nginx:latest
+    container_name: web_container
+    networks:
+      port-scan-network:
+        ipv4_address: 192.168.1.100
+
+  ssh-container:
+    image: lscr.io/linuxserver/openssh-server
+    container_name: ssh_container
+    environment:
+      - USER_PASSWORD=password
+      - USER_NAME=user
+      - PASSWORD_ACCESS=true
+    networks:
+      port-scan-network:
+        ipv4_address: 192.168.1.101
+
+  ftpd:
+    build: ./ftp_server/
+    environment:
+        - FTPD_BANNER=Anonymous FTP server
+    networks:
+      port-scan-network:
+        ipv4_address: 192.168.1.102
+
+networks:
+  port-scan-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import scanning
 from cli import initialize
 import options

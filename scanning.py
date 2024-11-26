@@ -10,7 +10,7 @@ def scan_ports(ip_addr: str, ports: list[int], max_threads: int = 100) -> list[d
     # Using a lock to safely append to the list
     lock = threading.Lock()
 
-    def scan_port(port):
+    def scan_port(port): 
         """Scan a single port and detect its service."""
         if is_port_open(ip_addr, port):
             service = detect_service(ip_addr, port)

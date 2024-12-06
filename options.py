@@ -1,9 +1,12 @@
 def initialize():
-    global verbose
-    global target_ip
-    global start_port
-    global end_port
+    global VERBOSE
+    global TARGET_IP
+    global START_PORT
+    global END_PORT
+    global MAX_THREADS
 
-    verbose = False
-    target_ip = "127.0.0.1"
-    start_port, end_port = 0, 9999
+    VERBOSE = False
+    TARGET_IP = "127.0.0.1"
+    START_PORT = 0
+    END_PORT = 9999
+    MAX_THREADS = 100

@@ -8,8 +8,8 @@ if __name__ == "__main__":
     initialize()
 
     results = scanning.scan_ports(
-        options.target_ip,
-        range(options.start_port, options.end_port)
+        options.TARGET_IP,
+        list(range(options.START_PORT, options.END_PORT))
     )
 
     print("\nScan Results:")

@@ -22,12 +22,28 @@ def initialize():
                         action="store_true",
                         help="Enable verbose output")
 
+    # Maximum thread amount
+    parser.add_argument("-T", "--max-threads",
+                        type=max_threads_validator,
+                        default=100,
+                        help="Maximum number of threads allowed")
+
     args = parser.parse_args()
 
-    options.verbose = args.verbose
-    options.target_ip = args.target_ip
-    options.start_port, options.end_port = args.port_range
+    options.VERBOSE = args.verbose
+    options.TARGET_IP = args.target_ip
+    options.START_PORT, options.END_PORT = args.port_range
+    options.MAX_THREADS = args.max_threads
 
+
+def max_threads_validator(threads):
+    try:
+        threads = int(threads)
+    except:
+        raise argparse.ArgumentTypeError("Maximum number of threads should be an integer")
+    if threads <= 0:
+        raise argparse.ArgumentTypeError("Maximum number of threads should be positive")
+    return threads
 
 def ip_addr_or_network_validator(
         address,

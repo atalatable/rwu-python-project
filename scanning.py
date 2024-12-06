@@ -4,7 +4,7 @@ import options
 from concurrent.futures import ThreadPoolExecutor
 
 
-def scan_ports(ip_addr: str, ports: list[int], max_threads: int = 100) -> list[dict]:
+def scan_ports(ip_addr: str, ports: list[int]) -> list[dict]:
     """Returns a list of dictionaries with port and service information."""
     results = []
     # Using a lock to safely append to the list
@@ -19,7 +19,8 @@ def scan_ports(ip_addr: str, ports: list[int], max_threads: int = 100) -> list[d
                 results.append({"port": port, "service": service})
 
     # Using ThreadPoolExecutor to limit the number of threads allowed
-    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+    with ThreadPoolExecutor(max_workers=options.MAX_THREADS) as executor:
+        print(f"Maximum number of threads : {executor._max_workers}")
         for port in ports:
             executor.submit(scan_port, port)
 
@@ -37,7 +38,7 @@ def is_port_open(
     result = sock.connect_ex((ip_addr, port))
     sock.close()
 
-    if options.verbose:
+    if options.VERBOSE:
         print(f"[+] {port} : {'opened' if result == 0 else 'closed'}")
 
     return result == 0

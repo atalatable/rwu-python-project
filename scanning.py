@@ -1,10 +1,20 @@
 import socket
 import threading
 import options
+import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 
 
-def scan_ports(ip_addr: str, ports: list[int]) -> list[dict]:
+def scan_network(ip_netw: ipaddress.IPv4Network, ports: list[int]) -> dict[str, list[dict]]:
+    out = {}
+    for ip_addr in ip_netw.hosts():
+        if options.VERBOSE:
+            print(f"[+] {ip_addr}")
+        out[ip_addr] = scan_ports(ip_addr, ports)
+
+    return out
+
+def scan_ports(ip_addr: ipaddress.IPv4Address, ports: list[int]) -> list[dict]:
     """Returns a list of dictionaries with port and service information."""
     results = []
     # Using a lock to safely append to the list
@@ -20,22 +30,21 @@ def scan_ports(ip_addr: str, ports: list[int]) -> list[dict]:
 
     # Using ThreadPoolExecutor to limit the number of threads allowed
     with ThreadPoolExecutor(max_workers=options.MAX_THREADS) as executor:
-        print(f"Maximum number of threads : {executor._max_workers}")
         for port in ports:
             executor.submit(scan_port, port)
 
     return results
 
 def is_port_open(
-        ip_addr,
-        port,
+        ip_addr: ipaddress.IPv4Address,
+        port: int,
         ) -> bool:
     """Returns True if a port is open"""
 
     socket_type = socket.SOCK_STREAM
     sock = socket.socket(socket.AF_INET, socket_type)
     sock.settimeout(0.5)  # Set a timeout for faster response
-    result = sock.connect_ex((ip_addr, port))
+    result = sock.connect_ex((str(ip_addr), port))
     sock.close()
 
     if options.VERBOSE:
@@ -43,13 +52,13 @@ def is_port_open(
 
     return result == 0
 
-def detect_service(ip_addr, port):
+def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
     """Attempt to detect the service running on any given port."""
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.settimeout(1)
-            sock.connect((ip_addr, port))
-            
+            sock.connect((str(ip_addr), port))
+
             # Attempt to read initial banner
             try:
                 banner = sock.recv(1024).decode(errors="ignore").strip()

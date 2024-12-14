@@ -1,4 +1,5 @@
 import argparse
+import ipaddress
 import re
 import options
 
@@ -31,7 +32,6 @@ def initialize():
     args = parser.parse_args()
 
     options.VERBOSE = args.verbose
-    options.TARGET_IP = args.target_ip
     options.START_PORT, options.END_PORT = args.port_range
     options.MAX_THREADS = args.max_threads
 
@@ -53,7 +53,14 @@ def ip_addr_or_network_validator(
     # And added optional / at the end (from 0 going to 32, based on CIDR)
     if not pat.match(address):
         raise argparse.ArgumentTypeError("invalid ip address or network")
-    return address
+    if "/" not in address:
+        address = f"{address}/32"
+
+    try:
+        # Strict = False to allow any address from the network as the base address
+        options.TARGET_NETWORK = ipaddress.IPv4Network(address, strict=False)
+    except:
+        raise argparse.ArgumentTypeError("Invalid address or network given")
 
 
 def port_range_validator(port_range, pat=re.compile(r"^(\d+)-(\d+)$")):

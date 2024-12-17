@@ -4,31 +4,36 @@ import options
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 
+from services.ssh import SshService
 
-def scan_network(ip_netw: ipaddress.IPv4Network, ports: list[int]) -> dict[str, list[dict]]:
-    out = {}
+
+def scan_network(ip_netw: ipaddress.IPv4Network, ports: list[int]) -> list[dict]:
+    out = []
     for ip_addr in ip_netw.hosts():
         if options.VERBOSE:
             print(f"[+] {ip_addr}")
-        out[ip_addr] = scan_ports(ip_addr, ports)
+        out.append({
+            "ip": ip_addr,
+            "open_ports": scan_ports(ip_addr, ports)
+        })
 
     return out
 
 def scan_ports(ip_addr: ipaddress.IPv4Address, ports: list[int]) -> list[dict]:
     """Returns a list of dictionaries with port and service information."""
     results = []
-    # Using a lock to safely append to the list
+    # Using a lock to safely append to the list while on multiple threads
     lock = threading.Lock()
 
     def scan_port(port): 
         """Scan a single port and detect its service."""
         if is_port_open(ip_addr, port):
-            service = detect_service(ip_addr, port)
-            # Use a lock to append to the list safely from different threads
+            # TODO Move detect services to another function
+            # service = detect_service(ip_addr, port)
             with lock:
-                results.append({"port": port, "service": service})
+                results.append(port)
 
-    # Using ThreadPoolExecutor to limit the number of threads allowed
+    # Using ThreadPoolExecutor to limit the number of threads allowed 
     with ThreadPoolExecutor(max_workers=options.MAX_THREADS) as executor:
         for port in ports:
             executor.submit(scan_port, port)
@@ -64,7 +69,7 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                 banner = sock.recv(1024).decode(errors="ignore").strip()
                 if banner:
                     if "SSH" in banner.upper():
-                        return "SSH"
+                        return SshService(ip_addr, port)
                     if "FTP" in banner.upper():
                         return "FTP"
                     if "SMTP" in banner.upper():

@@ -4,6 +4,7 @@ import options
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 
+from services.http import HttpService
 from services.ssh import SshService
 
 
@@ -77,7 +78,7 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                     if "MySQL" in banner.upper():
                         return "MySQL"
                     if "HTTP" in banner or "<HTML>" in banner.upper():
-                        return "HTTP"
+                        return HttpService(ip_addr, port)
                     return f"Banner Detected: {banner}"
             except socket.timeout:
                 pass  
@@ -86,9 +87,9 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
             sock.sendall(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
             response = sock.recv(1024).decode(errors="ignore")
             if "HTTP" in response:
-                return "HTTP"
+                return HttpService(ip_addr, port)
             if "Not Implemented" in response:
-                return "Custom HTTP Server"
+                return HttpService(ip_addr, port)
             if "SMTP" in response:
                 return "SMTP"
             if "POP3" in response:

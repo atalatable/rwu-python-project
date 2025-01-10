@@ -4,7 +4,10 @@ import options
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 
+from services.ftp import FtpService
 from services.http import HttpService
+from services.mysql import MySqlService
+from services.smtp import SmtpService
 from services.ssh import SshService
 
 
@@ -72,11 +75,11 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                     if "SSH" in banner.upper():
                         return SshService(ip_addr, port)
                     if "FTP" in banner.upper():
-                        return "FTP"
+                        return FtpService(ip_addr, port)
                     if "SMTP" in banner.upper():
-                        return "SMTP"
+                        return SmtpService(ip_addr, port)
                     if "MySQL" in banner.upper():
-                        return "MySQL"
+                        return MySqlService(ip_addr, port)
                     if "HTTP" in banner or "<HTML>" in banner.upper():
                         return HttpService(ip_addr, port)
                     return f"Banner Detected: {banner}"
@@ -91,7 +94,7 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
             if "Not Implemented" in response:
                 return HttpService(ip_addr, port)
             if "SMTP" in response:
-                return "SMTP"
+                return SmtpService(ip_addr, port)
             if "POP3" in response:
                 return "POP3"
 

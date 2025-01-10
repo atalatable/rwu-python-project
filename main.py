@@ -3,6 +3,7 @@
 import scanning
 from cli import initialize
 import options
+from services import service
 
 if __name__ == "__main__":
     initialize()
@@ -18,4 +19,7 @@ if __name__ == "__main__":
             for port in address["open_ports"]:
                 detected_service = scanning.detect_service(address["ip"], port)
 
-                print(f"{detected_service.port} - {detected_service.name}")
+                if isinstance(detected_service, service.Service):
+                    print(f"{detected_service.port} - {detected_service.name}")
+                else:
+                    print(f"{port} - {detected_service}")

@@ -7,8 +7,17 @@ class Service:
         self._port = port
 
     # Connect method to be implemented for each service
-    def connect(self):
-        raise NotImplementedError("Connect method should be implemented for each service individually")
+    def connect(self, username: str, password=None):
+        raise NotImplementedError("connect method should be implemented for each service individually")
+
+    # Try login method to be implemented for each service
+    # Should try default credentials, anonymous login, ...
+    def try_login(self):
+        raise NotImplementedError("try_login method should be implemented for each service individually")
+
+    # Bruteforce method to be implemented for each service
+    def bruteforce(self):
+        raise NotImplementedError("bruteforce method should be implemented for each service individually")
 
     # Getters
     @property

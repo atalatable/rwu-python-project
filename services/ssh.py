@@ -25,17 +25,19 @@ class SshService(Service):
 
     def try_login(self) -> bool:
         
-        default_credentials = [("admin", "admin"), ("root", "root"), ("user", "password")]
+        default_credentials = [("admin", "admin"), ("root", "root"), ("user", "password"), ("baptiste", "superpassword")]
         for username, password in default_credentials:
             if self.connect(username, password):
                 print(f"[+] Default credentials found: {username}/{password}")
                 return True
         return False
 
-    def bruteforce(self, username: str, wordlist_path: str) -> bool:
-        
+    def bruteforce(self) -> bool:
+
+        # modify this later
+        username = "baptiste"
         try:
-            with open(wordlist_path, "r") as wordlist:
+            with open("/wordlists/ssh-wordlist.txt", "r") as wordlist:
                 for password in wordlist:
                     password = password.strip()
                     if self.connect(username, password):

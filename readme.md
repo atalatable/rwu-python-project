@@ -17,3 +17,7 @@ The aim of this project is to make a machine / network port scanner. And then tr
 ## Test Lab
 
 Start the lab using `docker compose up -d --build`. And stop `docker compose down --remove-orphan`
+
+## Required Libraries
+
+ - paramiko

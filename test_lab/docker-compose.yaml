@@ -56,6 +56,19 @@ services:
       port-scan-network:
         ipv4_address: 192.168.1.105
 
+  samba:
+    image: dockurr/samba
+    container_name: samba
+    environment:
+      NAME: "Data"
+      USER: "baptiste"
+      PASS: "superpassword"
+    volumes:
+      - ./smbserver:/storage
+    networks:
+      port-scan-network:
+        ipv4_address: 192.168.1.106
+
 networks:
   port-scan-network:
     driver: bridge

@@ -1,8 +1,10 @@
+from os import error
 import socket
 import threading
 import options
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
+import sys
 
 from services.ftp import FtpService
 from services.http import HttpService
@@ -17,11 +19,17 @@ def scan_network(ip_netw: ipaddress.IPv4Network, ports: list[int]) -> list[dict]
     for ip_addr in ip_netw.hosts():
         if options.VERBOSE:
             print(f"[+] {ip_addr}")
+        else:
+            sys.stdout.write(f"\r[*] Scanning address: {ip_addr}")
+            sys.stdout.flush()
         out.append({
             "ip": ip_addr,
             # Makes the correct structure
             "open_ports": [{"port": port, "service": ""} for port in scan_ports(ip_addr, ports)]
         })
+
+    sys.stdout.write("\r" + " " * 50 + "\r")
+    sys.stdout.flush()
 
     return out
 
@@ -70,20 +78,24 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
 
             # Attempt to read initial banner
             try:
-                banner = sock.recv(1024).decode(errors="ignore").strip()
+                banner = sock.recv(1024)
                 if banner:
-                    if "SSH" in banner.upper():
+                    banner_decoded = banner.decode(errors="ignore").strip()
+                    if "SSH" in banner_decoded.upper():
                         return SshService(ip_addr, port)
-                    if "FTP" in banner.upper():
+                    if "FTP" in banner_decoded.upper():
                         return FtpService(ip_addr, port)
-                    if "TELNET" in banner.upper():
+                    if "TELNET" in banner_decoded.upper():
                         return TelnetService(ip_addr, port)
-                    if "SMTP" in banner.upper():
+                    if "SMTP" in banner_decoded.upper():
                         return SmtpService(ip_addr, port)
-                    if "MySQL" in banner.upper():
+                    if "MySQL" in banner_decoded.upper():
                         return MySqlService(ip_addr, port)
-                    if "HTTP" in banner or "<HTML>" in banner.upper():
+                    if "HTTP" in banner_decoded.upper() or "<HTML>" in banner_decoded.upper():
                         return HttpService(ip_addr, port) 
+                    # Telnet IAC sequences
+                    if banner.startswith(b'\xff\xfd') or banner.startswith(b'\xff\xfb'):
+                        return TelnetService(ip_addr, port)
                     return f"Banner Detected: {banner}"
             except socket.timeout:
                 pass  

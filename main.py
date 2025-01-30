@@ -60,9 +60,7 @@ if __name__ == "__main__":
                 if isinstance(detected_service, service.Service):
                     try:
                         brute_force_success = detected_service.bruteforce()
-                        if brute_force_success:
-                            print(f"\t[+] Brute-force success on {detected_service.name} ({detected_service.ip_addr}:{detected_service.port})")
-                        else:
+                        if not brute_force_success:
                             print(f"\t[-] Brute-force failed on {detected_service.name} ({detected_service.ip_addr}:{detected_service.port})")
                     except:
                         print(f"\t[+] Unsupported service for bruteforce attempt ({detected_service})")

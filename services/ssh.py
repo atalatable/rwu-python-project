@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address
+import options
 from services.service import Service
 from colorama import Fore, Back, Style
 import paramiko
@@ -8,10 +9,9 @@ import os
 class SshService(Service):
     def __init__(self, ip_addr: IPv4Address, port: int) -> None:
         super().__init__("SSH", ip_addr, port)
-        self.wordlist_path = os.path.join(os.path.dirname(__file__), "wordlists", "ssh-wordlist.txt")
+        self.wordlist_path = os.path.join(os.path.dirname(__file__), "../test_lab/", "wordlist.txt")
 
     def connect(self, username: str, password: str) -> bool:
-        
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -21,10 +21,12 @@ class SshService(Service):
         except paramiko.AuthenticationException:
             return False
         except paramiko.SSHException as e:
-            print(f"\t[SSH ERROR] {e}")
+            if options.VERBOSE:
+                print(f"\t[SSH ERROR] {e}")
             return False
         except Exception as e:
-            print(f"[ERROR] {e}")
+            if options.VERBOSE:
+                print(f"\t[ERROR] {e}")
             return False
 
     def try_login(self) -> bool:

@@ -1,9 +1,8 @@
 from ipaddress import IPv4Address
 import options
 from services.service import Service
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 import paramiko
-import sys
 import os
 
 class SshService(Service):

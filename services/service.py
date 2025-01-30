@@ -1,9 +1,6 @@
 from ipaddress import IPv4Address
 from colorama import Fore, Style
-import os
 import sys
-import queue
-import threading
 
 import options
 
@@ -12,12 +9,9 @@ class Service:
         self._name = name
         self._ip_addr = ip_addr
         self._port = port
-        self.queue = queue.Queue()
-        self.found = False  # Stop flag when credentials are found
-        self.lock = threading.Lock()  # Lock for synchronized printing
 
     # Connect method to be implemented for each service
-    def connect(self, username: str, password=None) -> bool:
+    def connect(self, username: str, password: str) -> bool:
         raise NotImplementedError("connect method should be implemented for each service individually")
 
     # Try login method to be implemented for each service

@@ -19,13 +19,14 @@ def scan_network(ip_netw: ipaddress.IPv4Network, ports: list[int]) -> list[dict]
             print(f"[+] {ip_addr}")
         out.append({
             "ip": ip_addr,
-            "open_ports": scan_ports(ip_addr, ports)
+            # Makes the correct structure
+            "open_ports": [{"port": port, "service": ""} for port in scan_ports(ip_addr, ports)]
         })
 
     return out
 
-def scan_ports(ip_addr: ipaddress.IPv4Address, ports: list[int]) -> list[dict]:
-    """Returns a list of dictionaries with port and service information."""
+def scan_ports(ip_addr: ipaddress.IPv4Address, ports: list[int]) -> list[int]:
+    """Returns a list of open ports."""
     results = []
     # Using a lock to safely append to the list while on multiple threads
     lock = threading.Lock()
@@ -33,8 +34,6 @@ def scan_ports(ip_addr: ipaddress.IPv4Address, ports: list[int]) -> list[dict]:
     def scan_port(port): 
         """Scan a single port and detect its service."""
         if is_port_open(ip_addr, port):
-            # TODO Move detect services to another function
-            # service = detect_service(ip_addr, port)
             with lock:
                 results.append(port)
 

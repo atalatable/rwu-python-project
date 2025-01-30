@@ -21,3 +21,4 @@ Start the lab using `docker compose up -d --build`. And stop `docker compose dow
 ## Required Libraries
 
  - paramiko
+ - colorama

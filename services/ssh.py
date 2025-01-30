@@ -21,47 +21,17 @@ class SshService(Service):
         except paramiko.AuthenticationException:
             return False
         except paramiko.SSHException as e:
-            print(f"[SSH ERROR] {e}")
+            print(f"\t[SSH ERROR] {e}")
             return False
         except Exception as e:
             print(f"[ERROR] {e}")
             return False
 
     def try_login(self) -> bool:
-        
-        default_credentials = [("admin", "admin"), ("root", "root"), ("user", "password"), ("boupboup", "superpassword")]
+        default_credentials = [("root", "root")]
         for username, password in default_credentials:
             if self.connect(username, password):
-                print(Fore.GREEN + f"[+] Default credentials found: {username}/{password}")
-                print(Style.RESET_ALL)
+                print(Fore.GREEN + f"\t[+] Default credentials found: {username}/{password}" + Style.RESET_ALL)
                 return True
         return False
 
-    def bruteforce(self) -> bool:
-        
-        # TODO: investiguer si on relance le bruteforce trop souvent cpt, si on met trop de mots dans la wordlist cpt mais desfois ça remarche quand même
-        username = "baptiste"  # TODO: Hardcoded for now, ask the user?
-        attempt_count = 0
-
-        try:
-            with open(self.wordlist_path, "r") as wordlist:
-                passwords = wordlist.readlines()
-                total_attempts = len(passwords)
-
-                for password in passwords:
-                    password = password.strip()
-                    attempt_count += 1
-
-                    sys.stdout.write(f"\r[*] Bruteforce Attempts: {attempt_count}/{total_attempts}")
-                    sys.stdout.flush()
-
-                    if self.connect(username, password):
-                        print(Fore.GREEN + f"\n[+] Brute-force success: {username}/{password}")
-                        print(Style.RESET_ALL)
-                        return True
-
-            print("\n[-] Brute-force attempt finished, no valid credentials found.")
-        except FileNotFoundError:
-            print("\n[ERROR] Wordlist file not found at", self.wordlist_path)
-        
-        return False

@@ -41,9 +41,9 @@ def initialize():
 
     args = parser.parse_args()
 
-    if args.user and not args.wordlist:
+    if (args.user and not args.wordlist) or (args.wordlist and not args.user):
         raise argparse.ArgumentTypeError(
-                "You must specify a wordlist if you specify a username")
+                "You must specify a wordlist if you specify a username and inversely")
     else:
         options.USERNAME = args.user
         options.PASSWORD_FILE_PATH = args.wordlist

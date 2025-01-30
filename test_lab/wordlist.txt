@@ -32,6 +32,7 @@ prelude
 pixiedust
 person
 number7
+superpassword
 maria123
 march20
 magick
@@ -119,7 +120,6 @@ albert1
 P@ssw0rd
 MICKEY
 CHRIS
-superpassword
 585858
 4444444
 121289

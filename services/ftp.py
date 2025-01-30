@@ -29,11 +29,11 @@ class FtpService(Service):
         try:
             self.ftp.connect(str(self.ip_addr), self.port, timeout=5)
             response = self.ftp.login("Anonymous", "")
-            print(Fore.GREEN + f"\t[+] ({self.port}) Anonymous login successful: {response}" + Style.RESET_ALL)
+            print(Fore.GREEN + f"\t({self.port}) Anonymous login successful: {response}" + Style.RESET_ALL)
             self.ftp.quit()
             return True
         except ftplib.error_perm:
-            print("\t[-] Anonymous login not allowed" + Style.RESET_ALL)
+            print("\t({self.port}) Anonymous login not allowed" + Style.RESET_ALL)
             return False
         except Exception as e:
             print(f"\t[FTP ERROR] {e}")

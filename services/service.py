@@ -5,6 +5,8 @@ import sys
 import queue
 import threading
 
+import options
+
 class Service:
     def __init__(self, name: str, ip_addr: IPv4Address, port: int) -> None:
         self._name = name
@@ -55,7 +57,7 @@ class Service:
                 sys.stdout.flush()
                 print(Fore.GREEN + f"\t[+] Brute-force success: {username}/{password}" + Style.RESET_ALL)
                 self.found = True
-                self.queue.queue.clear()  # Clear remaining tasks to stop other threads
+                self.queue.queue.clear()
                 break  
 
             self.queue.task_done()
@@ -63,8 +65,11 @@ class Service:
     def bruteforce(self):
         """ Multi-threaded brute-force attack """
 
-        username = "baptiste"  # TODO: Hardcoded for now, ask the user?
-        wordlist_path = os.path.join(os.path.dirname(__file__), "../test_lab", "wordlist.txt")
+        username = options.USERNAME
+        wordlist_path = options.PASSWORD_FILE_PATH
+
+        if not wordlist_path:
+            raise Exception("An error occured, password wordlist path should not be empty")
 
         try:
             with open(wordlist_path, "r") as wordlist:
@@ -84,7 +89,7 @@ class Service:
 
         # Create and start worker threads
         threads = []
-        for _ in range(min(5, self.queue.qsize())):
+        for _ in range(min(1, self.queue.qsize())):
             thread = threading.Thread(target=self.worker, args=(username, total_attempts))
             thread.start()
             threads.append(thread)
@@ -97,6 +102,6 @@ class Service:
         sys.stdout.flush()
 
         if not self.found:
-            print("\t[-] Brute-force attempt finished, no valid credentials found.")
+            print(f"\t({self.port}) Brute-force attempt finished, no valid credentials found.")
 
         return self.found

@@ -24,13 +24,17 @@ class SshService(Service):
             if options.VERBOSE:
                 print(f"\t[SSH ERROR] {e}")
             return False
+        except EOFError as e:
+            if options.VERBOSE:
+                print(f"[ERROR] {e}")
+            return False
         except Exception as e:
             if options.VERBOSE:
                 print(f"\t[ERROR] {e}")
             return False
 
     def try_login(self) -> bool:
-        default_credentials = [("root", "root")]
+        default_credentials = [("root", "root"), ("user", "password")]
         for username, password in default_credentials:
             if self.connect(username, password):
                 print(Fore.GREEN + f"\t[+] Default credentials found: {username}/{password}" + Style.RESET_ALL)

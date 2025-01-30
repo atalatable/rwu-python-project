@@ -29,7 +29,24 @@ def initialize():
                         default=100,
                         help="Maximum number of threads allowed")
 
+    # username
+    parser.add_argument("-u", "--user",
+                        default=None,
+                        help="Username to test on bruteforcing")
+
+    # password wordlist
+    parser.add_argument("-w", "--wordlist",
+                        default=None,
+                        help="Password wordlist to use on bruteforcing")
+
     args = parser.parse_args()
+
+    if args.user and not args.wordlist:
+        raise argparse.ArgumentTypeError(
+                "You must specify a wordlist if you specify a username")
+    else:
+        options.USERNAME = args.user
+        options.PASSWORD_FILE_PATH = args.wordlist
 
     options.VERBOSE = args.verbose
     options.START_PORT, options.END_PORT = args.port_range

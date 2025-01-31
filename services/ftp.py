@@ -3,7 +3,6 @@ import options
 from services.service import Service
 from colorama import Fore, Style
 import ftplib
-import sys
 
 class FtpService(Service):
     def __init__(self, ip_addr: IPv4Address, port: int) -> None:

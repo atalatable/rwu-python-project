@@ -23,3 +23,4 @@ Start the lab using `docker compose up -d --build`. And stop `docker compose dow
  - paramiko
  - colorama
  - mysql-connector
+ - smbprotocol

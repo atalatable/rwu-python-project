@@ -1,15 +1,20 @@
 from os import error
 import socket
 import threading
+
+from smbclient import smbclient
 import options
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 import sys
+from smbprotocol.connection import Connection
+from smbprotocol.session import Session
+from smbprotocol.tree import TreeConnect
 
 from services.ftp import FtpService
 from services.http import HttpService
 from services.mysql import MySqlService
-from services.smtp import SmtpService
+from services.smb import SmbService
 from services.ssh import SshService
 from services.telnet import TelnetService
 
@@ -87,8 +92,6 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                         return FtpService(ip_addr, port)
                     if "TELNET" in banner_decoded.upper():
                         return TelnetService(ip_addr, port)
-                    if "SMTP" in banner_decoded.upper():
-                        return SmtpService(ip_addr, port)
                     if "MySQL" in banner_decoded.upper():
                         return MySqlService(ip_addr, port)
                     if "mysql_native_password" in banner_decoded.lower() or "caching_sha2_password" in banner_decoded.lower() or "sha256_password" in banner_decoded.lower():
@@ -101,7 +104,7 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                     return f"Banner Detected: {banner_decoded}"
             except socket.timeout:
                 pass  
-            
+
             # Fallback: Send an HTTP-like request and analyze response
             sock.sendall(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
             response = sock.recv(1024).decode(errors="ignore")
@@ -109,10 +112,6 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                 return HttpService(ip_addr, port)
             if "Not Implemented" in response:
                 return HttpService(ip_addr, port)
-            if "SMTP" in response:
-                return SmtpService(ip_addr, port)
-            if "POP3" in response:
-                return "POP3"
 
             return "Unknown Service"
     except socket.timeout:

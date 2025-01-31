@@ -33,10 +33,8 @@ class SshService(Service):
             return False
 
     def try_login(self) -> bool:
-        default_credentials = [("root", "root"), ("user", "password")]
-        for username, password in default_credentials:
-            if self.connect(username, password):
-                print(Fore.GREEN + f"    ({self.port}) Default credentials found: {username}/{password}" + Style.RESET_ALL)
-                return True
+        if self.connect("root", "root"):
+            print(Fore.GREEN + f"    ({self.port}) Default credentials found: root:root" + Style.RESET_ALL)
+            return True
         return False
 

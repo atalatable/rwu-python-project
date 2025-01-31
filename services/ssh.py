@@ -21,22 +21,22 @@ class SshService(Service):
             return False
         except paramiko.SSHException as e:
             if options.VERBOSE:
-                print(f"\t[SSH ERROR] {e}")
+                print(f"    [SSH ERROR] {e}")
             return False
         except EOFError as e:
             if options.VERBOSE:
-                print(f"[ERROR] {e}")
+                print(f"    [ERROR] {e}")
             return False
         except Exception as e:
             if options.VERBOSE:
-                print(f"\t[ERROR] {e}")
+                print(f"    [ERROR] {e}")
             return False
 
     def try_login(self) -> bool:
         default_credentials = [("root", "root"), ("user", "password")]
         for username, password in default_credentials:
             if self.connect(username, password):
-                print(Fore.GREEN + f"\t({self.port}) Default credentials found: {username}/{password}" + Style.RESET_ALL)
+                print(Fore.GREEN + f"    ({self.port}) Default credentials found: {username}/{password}" + Style.RESET_ALL)
                 return True
         return False
 

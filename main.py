@@ -30,9 +30,9 @@ if __name__ == "__main__":
                 detected_service = open_port["service"]
 
                 if isinstance(detected_service, service.Service):
-                    print(f"\t{detected_service.port} - {detected_service.name}")
+                    print(f"    {detected_service.port} - {detected_service.name}")
                 else:
-                    print(f"\t{open_port} - {detected_service}")
+                    print(f"    {open_port} - {detected_service}")
 
     print("\n========== DEFAULT LOGIN ==========")
 
@@ -45,13 +45,11 @@ if __name__ == "__main__":
                     try:
                         login_success = detected_service.try_login()
                         if not login_success:
-                            print(f"\t({detected_service.port} - {detected_service.name}) Default login method doesn't work")
-                        # else:
-                        #     print(f"\t[+] Successful login on {detected_service.name} ({detected_service.ip_addr}:{detected_service.port})")
+                            print(f"    ({detected_service.port} - {detected_service.name}) Default login method doesn't work")
                     except:
-                        print(f"\tUnsupported service for default login ({detected_service})")
+                        print(f"    Unsupported service for default login ({detected_service})")
                 else:
-                    print(f"\tUnsupported service for default login ({detected_service})")
+                    print(f"    Unsupported service for default login ({detected_service})")
 
     if options.USERNAME:
         print("\n======== BRUTE FORCE ===========")
@@ -63,11 +61,9 @@ if __name__ == "__main__":
                     detected_service = open_port["service"]
                     if isinstance(detected_service, service.Service):
                         try:
-                            brute_force_success = detected_service.bruteforce()
-                            if not brute_force_success:
-                                print(f"\t({detected_service.port} - {detected_service.name}) Brute-force failed")
+                            detected_service.bruteforce()
                         except:
-                            print(f"\tUnsupported service for bruteforce attempt ({detected_service})")
+                            print(f"    Unsupported service for bruteforce attempt ({detected_service})")
                     else:
-                        print(f"\tUnsupported service for bruteforce attempt ({detected_service})")
+                        print(f"    Unsupported service for bruteforce attempt ({detected_service})")
 

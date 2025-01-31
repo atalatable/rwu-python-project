@@ -20,9 +20,7 @@ class FtpService(Service):
             return False  # Invalid login credentials
         except Exception as e:
             if options.VERBOSE:
-                sys.stdout.write("\r" + " " * 50 + "\r")
-                sys.stdout.flush()
-                print(f"\t[FTP ERROR] {e}")
+                print(f"    [FTP ERROR] {e}")
             return False
 
     def try_login(self) -> bool:
@@ -30,12 +28,10 @@ class FtpService(Service):
             ftp = ftplib.FTP()
             ftp.connect(str(self.ip_addr), self.port, timeout=5)
             response = ftp.login("Anonymous", "")
-            print(Fore.GREEN + f"\t({self.port} - {self.name}) Anonymous login successful: {response}" + Style.RESET_ALL)
+            print(Fore.GREEN + f"    ({self.port} - {self.name}) Anonymous login successful: {response}" + Style.RESET_ALL)
             ftp.quit()
             return True
-        except ftplib.error_perm:
-            print(f"\t({self.port} - {self.name}) Anonymous login not allowed" + Style.RESET_ALL)
-            return False
         except Exception as e:
-            print(f"\t[FTP ERROR] {e}")
+            if options.VERBOSE:
+                print(f"    [FTP ERROR] {e}")
             return False

@@ -14,12 +14,12 @@ class MySqlService(Service):
             return True
         except Exception as e:
             if options.VERBOSE:
-                print(f"[MYSQL ERROR] : {e}")
+                print(f"    [MYSQL ERROR] : {e}")
             return False
 
     def try_login(self):
         if self.connect("root", "root"):
-            print(Fore.GREEN + f"\t({self.port}) Default credentials found: root:root" + Style.RESET_ALL)
+            print(Fore.GREEN + f"    ({self.port}) Default credentials found: root:root" + Style.RESET_ALL)
             return True
         return False
 

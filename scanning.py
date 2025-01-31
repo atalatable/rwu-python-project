@@ -91,12 +91,14 @@ def detect_service(ip_addr: ipaddress.IPv4Address, port: int):
                         return SmtpService(ip_addr, port)
                     if "MySQL" in banner_decoded.upper():
                         return MySqlService(ip_addr, port)
+                    if "mysql_native_password" in banner_decoded.lower() or "caching_sha2_password" in banner_decoded.lower() or "sha256_password" in banner_decoded.lower():
+                        return MySqlService(ip_addr, port) 
                     if "HTTP" in banner_decoded.upper() or "<HTML>" in banner_decoded.upper():
                         return HttpService(ip_addr, port) 
                     # Telnet IAC sequences
                     if banner.startswith(b'\xff\xfd') or banner.startswith(b'\xff\xfb'):
                         return TelnetService(ip_addr, port)
-                    return f"Banner Detected: {banner}"
+                    return f"Banner Detected: {banner_decoded}"
             except socket.timeout:
                 pass  
             

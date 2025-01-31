@@ -16,7 +16,7 @@ class Service:
 
     # Try login method to be implemented for each service
     # Should try default credentials, anonymous login, ...
-    def try_login(self):
+    def try_login(self) -> bool:
         raise NotImplementedError("try_login method should be implemented for each service individually")
 
     # Getters
@@ -56,11 +56,11 @@ class Service:
                     if self.connect(username, password):
                         sys.stdout.write("\r" + " " * 50 + "\r")  # Overwrite with spaces
                         sys.stdout.flush()
-                        print(Fore.GREEN + f"\t[+] Brute-force success: {username}/{password}" + Style.RESET_ALL)
+                        print(Fore.GREEN + f"\t({self.port} - {self.name}) Brute-force success: {username}/{password}" + Style.RESET_ALL)
                         return True
             sys.stdout.write("\r" + " " * 50 + "\r")  # Overwrite with spaces
             sys.stdout.flush()
-            print("\t[-] Brute-force attempt finished, no valid credentials found.")
+            print("\t({self.port} - {self.name}) Brute-force attempt finished, no valid credentials found.")
         except FileNotFoundError:
             print("\t[ERROR] Wordlist file not found at", wordlist_path)
         

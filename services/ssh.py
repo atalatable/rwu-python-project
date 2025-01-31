@@ -36,7 +36,7 @@ class SshService(Service):
         default_credentials = [("root", "root"), ("user", "password")]
         for username, password in default_credentials:
             if self.connect(username, password):
-                print(Fore.GREEN + f"\t[+] Default credentials found: {username}/{password}" + Style.RESET_ALL)
+                print(Fore.GREEN + f"\t({self.port}) Default credentials found: {username}/{password}" + Style.RESET_ALL)
                 return True
         return False
 

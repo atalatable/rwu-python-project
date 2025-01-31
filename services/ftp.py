@@ -8,13 +8,13 @@ import sys
 class FtpService(Service):
     def __init__(self, ip_addr: IPv4Address, port: int) -> None:
         super().__init__("FTP", ip_addr, port)
-        self.ftp = ftplib.FTP()
 
     def connect(self, username: str, password: str) -> bool:
         try:
-            self.ftp.connect(str(self.ip_addr), self.port, timeout=5)
-            self.ftp.login(username, password)
-            self.ftp.quit()
+            ftp = ftplib.FTP()
+            ftp.connect(str(self.ip_addr), self.port, timeout=5)
+            ftp.login(username, password)
+            ftp.quit()
             return True
         except ftplib.error_perm:
             return False  # Invalid login credentials
@@ -27,13 +27,14 @@ class FtpService(Service):
 
     def try_login(self) -> bool:
         try:
-            self.ftp.connect(str(self.ip_addr), self.port, timeout=5)
-            response = self.ftp.login("Anonymous", "")
-            print(Fore.GREEN + f"\t({self.port}) Anonymous login successful: {response}" + Style.RESET_ALL)
-            self.ftp.quit()
+            ftp = ftplib.FTP()
+            ftp.connect(str(self.ip_addr), self.port, timeout=5)
+            response = ftp.login("Anonymous", "")
+            print(Fore.GREEN + f"\t({self.port} - {self.name}) Anonymous login successful: {response}" + Style.RESET_ALL)
+            ftp.quit()
             return True
         except ftplib.error_perm:
-            print("\t({self.port}) Anonymous login not allowed" + Style.RESET_ALL)
+            print(f"\t({self.port} - {self.name}) Anonymous login not allowed" + Style.RESET_ALL)
             return False
         except Exception as e:
             print(f"\t[FTP ERROR] {e}")
